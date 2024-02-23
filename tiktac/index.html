@@ -1,0 +1,240 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="">
+    <style>
+        body{
+            background: linear-gradient(#64b3e1, #f62e50);
+        }
+        #outer {
+            width: 100%;
+            height: 100%;
+            
+            text-align: center;
+            
+        }
+        #error{
+    color: red;
+    text-align: center;
+
+        }
+        #restart{
+            display: none;
+           height: 40px;
+           width: 150px;
+           background: linear-gradient(green, yellow);
+           border: none;
+           border-radius: 15px;
+            
+        }
+        #gamehint{
+            text-align: center;
+            padding: 20px;
+        }
+
+        #box {
+            width: 300px;
+            height: 300px;
+            background: rgba(214, 227, 18, 0.5);
+            /* background: linear-gradient(rgb(228, 116, 116),rgb(91, 224, 215),rgb(203, 65, 183)); */
+            margin: 100% auto;
+            margin: 0px auto;
+        }
+        table{
+            width: 300px;
+            height: 300px;
+        }
+        table tr{
+            width: 300px;
+            height: 100px;
+        }
+        table tr td{
+            width: 100px;
+            height: 100px;
+            font-size: 50px;
+            text-align: center;
+            font-weight: bolder;
+            line-height: 90px;
+        }
+        table tr td:hover{
+            background-color: red;
+        }
+        table,tr,td{
+            border: 3px solid black;
+            border-collapse: collapse;
+        }
+
+        /* Main Div CSS */
+
+        @keyframes rotate {
+  from {
+    transform: rotateZ(0deg);
+  }
+
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
+.border {
+  background-image: linear-gradient(to left, red, blue);
+  width: 1000px;
+  height: 600px;
+  border-radius: 20px;
+}
+
+.border::before {
+  background-image: linear-gradient(to left, red, blue);
+  content: "";
+  position: absolute;
+  z-index: -1;
+  height: 600px;
+  width: 1000px;
+  scale: 1.1;
+  filter: blur(25px);
+  animation: rotate 4s linear infinite;
+  border-radius: 100px;
+}
+
+.content {
+  background-color: #3ad8e4;
+  width: 1000px;
+  height: 600px;
+  border-radius: 19px;
+  scale: 0.9;
+}
+
+
+    </style>
+<script>
+    var turn=1; //1=X, 0=o, 2=blank 
+    var currentState=[2,2,2,2,2,2,2,2,2];
+    var winPosition=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    var gameStatus=true;
+
+
+    function chance(index)
+    {
+        // console.log(index);
+        if(currentState[index]==2)
+        {
+
+       
+        if(turn==0)
+        {
+            document.getElementsByTagName("td")[index].innerHTML="O";
+            currentState[index]=0;
+            turn=1;
+            gamehint.innerHTML="x player turn";
+
+            var audio=new Audio("audio1.wav");
+            audio.play();
+        }
+        else
+        {
+            document.getElementsByTagName("td")[index].innerHTML="X";
+            currentState[index]=1;
+            turn=0;
+            gamehint.innerHTML="O player turn";
+
+            var audio=new Audio("audio2.wav");
+            audio.play();
+
+        }
+        error.innerHTML="";
+    }
+    else{
+        gamehint.innerHTML="invalid Move";
+    }
+    var winner = checkwin();
+    if(winner!=2)
+    {
+        gameStatus=false;
+        restart.style.display="inline-block";
+        outer.style.backgroundImage="url('wedding.gif')";
+        outer.style.backgroundRepeat="no-repeat";
+        outer.style.backgroundSize="100% 100%";
+        if(winner==1)
+        {
+            // alert("o Player WON");
+            gamehint.innerHTML="x player WON";
+        }
+        else{
+            // alert("x Player WON");
+            gamehint.innerHTML="x player WON";
+        }
+    }
+    //game over condition
+    var count=0;
+    for(var i=0; i<currentState.length;i++)
+    {
+        if(currentState[i]==2)
+        {
+            count++;
+        }
+    }
+    if(count==0 && winner==2)
+    {
+        // error.innerHTML="GAME OVER";
+        gamehint.innerHTML="GAME OVER";
+        restart.style.display="inline-block";
+    }
+    }
+    function checkwin()
+    {
+       var winner=2;
+       for(var i=0; i<winPosition.length; i++)
+       {
+        var position=winPosition[i];
+        if(currentState[position[0]]==currentState[position[1]] && currentState[position[1]]==currentState[position[2]] && currentState[position[0]] !=2)
+        {
+            winner=currentState[position[0]];
+            break;
+        }
+       }
+        return winner;
+    }
+    function restartgame()
+    {
+        window.location.reload();
+    }
+</script>
+
+</head>
+
+<body>
+    <center>
+
+    <div class="border"><div class="content">
+
+    <div id="outer">
+        <h1 id="gamehint">X Player Turn</h1>
+        <div id="box">
+            <table>
+                <tr>
+                    <td onclick="chance(0)"></td>
+                    <td onclick="chance(1)"></td>
+                    <td onclick="chance(2)"></td>
+                </tr>
+
+                <tr>
+                    <td onclick="chance(3)"></td>
+                    <td onclick="chance(4)"></td>
+                    <td onclick="chance(5)"></td>
+                </tr>
+                <tr>
+                    <td onclick="chance(6)"></td>
+                    <td onclick="chance(7)"></td>
+                    <td onclick="chance(8)"></td>
+                </tr>
+            </table>
+        </div>
+        <p id="error"></p>
+        <button onclick="restartgame()" id="restart">RESTART GAME</button>
+    </div>
+
+</div></div>
+</center>
+</body>
+
+</html>
